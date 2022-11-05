@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note_taking_app/models/note_for_listing.dart';
+import 'package:note_taking_app/views/note_delete.dart';
+import 'package:note_taking_app/views/note_modify.dart';
 
 class NoteList extends StatelessWidget {
   NoteList({Key? key}) : super(key: key);
@@ -37,7 +39,13 @@ class NoteList extends StatelessWidget {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => NoteModify(),
+            ),
+          );
+        },
         child: Icon(Icons.add),
       ),
       body: ListView.builder(
@@ -51,14 +59,58 @@ class NoteList extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20)),
               child: Padding(
                 padding: const EdgeInsets.all(6.0),
-                child: ListTile(
-                  title: Text(
-                    notes[index].noteTitle,
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                child: Dismissible(
+                  key: ValueKey(notes[index].noteID),
+                  direction: DismissDirection.startToEnd,
+                  onDismissed: (direction) {},
+                  confirmDismiss: (direction) async {
+                    final result = await showDialog(
+                      context: context,
+                      builder: (context) => NoteDelete(),
+                    );
+                    print(result);
+                    return result;
+                  },
+                  background: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.only(left: 16),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                  subtitle: Text(
-                      'Last edited on ${formatDateTime(notes[index].lastEditedDateTime)}'),
-                  focusColor: Colors.grey,
+                  child: ListTile(
+                    // onLongPress: () async {
+                    //   final result = await showDialog(
+                    //     context: context,
+                    //     builder: (context) => NoteDelete(),
+                    //   );
+                    //   print(result);
+                    //   return result;
+                    // },
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => NoteModify(
+                            noteID: notes[index].noteID,
+                          ),
+                        ),
+                      );
+                    },
+                    title: Text(
+                      notes[index].noteTitle,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                    subtitle: Text(
+                        'Last edited on ${formatDateTime(notes[index].lastEditedDateTime)}'),
+                    focusColor: Colors.grey,
+                  ),
                 ),
               ),
             ),

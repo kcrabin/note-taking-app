@@ -5,8 +5,8 @@ class NoteForListing {
   DateTime lastEditedDateTime;
 
   NoteForListing({
-    required this.noteID,
-    required this.noteTitle,
+    this.noteID = '',
+    this.noteTitle = '',
     required this.createdDateTime,
     required this.lastEditedDateTime,
   });
